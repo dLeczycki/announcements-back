@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": true, //wymuszenie dodawania typu
+    "preserveConstEnums": true, //Enumy zostają w JS a nie w TS
+    "sourceMap": true, //Pokazuje co w JS jest czym w TS, ułatwia debugowanie
+    "target": "es6", //docelowa wersja JS
+    "downlevelIteration": true, //współpraca z nowymi pętlami np. for const x of xyz
+    "module": "CommonJS",
+    "lib": ["es6"], //wspierane biblioteki
+    "outDir": "dist", // miejsce gdzie transpiluje się TS
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+  }
+}
