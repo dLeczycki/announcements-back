@@ -24,7 +24,7 @@ export class AnnouncementRecord implements AnnouncementEntity {
     }
 
     if (obj.price < 0 || obj.price > 9999999) {
-      throw new ValidationError('Price cannot be less than 0 or greater than 9 999 999.');
+      throw new ValidationError('Announcement price cannot be less than 0 or greater than 9 999 999.');
     }
 
     //TODO: Check if URL is valid
