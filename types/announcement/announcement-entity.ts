@@ -7,3 +7,8 @@ export interface AnnouncementEntity {
   lat: number;
   lon: number;
 }
+
+
+export interface NewAnnouncementEntity extends Omit<AnnouncementEntity, 'id'> {
+  id?: string;
+}

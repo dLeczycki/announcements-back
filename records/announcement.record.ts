@@ -1,9 +1,9 @@
-import { AnnouncementEntity } from "../types";
+import { FieldPacket } from "mysql2";
+import { AnnouncementEntity, NewAnnouncementEntity } from "../types";
+import { pool } from "../utils/db";
 import { ValidationError } from "../utils/errors";
 
-interface NewAnnouncementEntity extends Omit<AnnouncementEntity, 'id'> {
-  id?: string;
-}
+type AnnouncementRecordResults = [AnnouncementEntity[], FieldPacket[]];
 
 export class AnnouncementRecord implements AnnouncementEntity {
   id: string;
@@ -36,11 +36,18 @@ export class AnnouncementRecord implements AnnouncementEntity {
       throw new ValidationError('Announcement cannot be located.');
     }
 
+    this.id = obj.id;
     this.name = obj.name;
     this.description = obj.description;
     this.price = obj.price;
     this.url = obj.url;
     this.lat = obj.lat;
     this.lon = obj.lon;
+  }
+
+  static async getOne(id: string): Promise<AnnouncementRecord | null> {
+    const [results] = await pool.execute("SELECT * FROM `announcements` WHERE id = :id", { id: id }) as AnnouncementRecordResults;
+
+    return results.length === 0 ? null : new AnnouncementRecord(results[0]);
   }
 }
