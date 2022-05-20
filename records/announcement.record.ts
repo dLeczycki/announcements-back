@@ -1,5 +1,5 @@
 import { FieldPacket } from "mysql2";
-import { AnnouncementEntity, NewAnnouncementEntity } from "../types";
+import { AnnouncementEntity, NewAnnouncementEntity, SimpleAnnouncementEntity } from "../types";
 import { pool } from "../utils/db";
 import { ValidationError } from "../utils/errors";
 
@@ -45,8 +45,24 @@ export class AnnouncementRecord implements AnnouncementEntity {
     this.lon = obj.lon;
   }
 
+  static async getAll(search: string): Promise<SimpleAnnouncementEntity[]> {
+    const [results] = await pool.execute("SELECT * FROM `announcements` WHERE `name` LIKE :search", {
+      search: `%${search}%`,
+    }) as AnnouncementRecordResults;
+
+    return results.map(result => {
+      const { id, lat, lon } = result;
+      return {
+        id,
+        lat,
+        lon
+      }
+    }
+    );
+  }
+
   static async getOne(id: string): Promise<AnnouncementRecord | null> {
-    const [results] = await pool.execute("SELECT * FROM `announcements` WHERE id = :id", { id: id }) as AnnouncementRecordResults;
+    const [results] = await pool.execute("SELECT * FROM `announcements` WHERE `id` = :id", { id: id }) as AnnouncementRecordResults;
 
     return results.length === 0 ? null : new AnnouncementRecord(results[0]);
   }
