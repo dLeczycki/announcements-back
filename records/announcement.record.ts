@@ -2,6 +2,7 @@ import { FieldPacket } from "mysql2";
 import { AnnouncementEntity, NewAnnouncementEntity, SimpleAnnouncementEntity } from "../types";
 import { pool } from "../utils/db";
 import { ValidationError } from "../utils/errors";
+import { v4 as uuid } from 'uuid';
 
 type AnnouncementRecordResults = [AnnouncementEntity[], FieldPacket[]];
 
@@ -65,5 +66,12 @@ export class AnnouncementRecord implements AnnouncementEntity {
     const [results] = await pool.execute("SELECT * FROM `announcements` WHERE `id` = :id", { id: id }) as AnnouncementRecordResults;
 
     return results.length === 0 ? null : new AnnouncementRecord(results[0]);
+  }
+
+  async insert(): Promise<void> {
+    if (!this.id) this.id = uuid();
+    else throw new Error('Cannot insert object which is already in database');
+
+    await pool.execute("INSERT INTO `announcements`(`id`, `name`, `description`, `price`, `url`, `lat`, `lon`) VALUES (:id, :name, :description, :price, :url, :lat, :lon)", this);
   }
 }

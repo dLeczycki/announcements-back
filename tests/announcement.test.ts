@@ -2,6 +2,15 @@ import { AnnouncementRecord } from "../records/announcement.record";
 import { AnnouncementEntity } from "../types";
 import { pool } from "../utils/db";
 
+const defaultObj = {
+  name: 'Test name',
+  description: 'blah',
+  url: 'https://link.to.buy.product',
+  price: 0,
+  lat: 9,
+  lon: 9,
+}
+
 afterAll(async () => {
   await pool.end();
 })
@@ -32,4 +41,24 @@ test('AnnouncementRecord.getAll returns small amount of data', async () => {
 
   expect((announcements[0] as AnnouncementEntity).price).toBeUndefined();
   expect((announcements[0] as AnnouncementEntity).description).toBeUndefined();
+});
+
+test('AnnouncementRecord.insert returns UUID', async () => {
+  const announcement = new AnnouncementRecord(defaultObj);
+
+  await announcement.insert();
+
+  expect(announcement.id).toBeDefined();
+  expect(typeof announcement.id).toBe('string');
+});
+
+test('AnnouncementRecord.insert inserts data to database', async () => {
+  const announcement = new AnnouncementRecord(defaultObj);
+
+  await announcement.insert();
+
+  const foundAnnouncement = await AnnouncementRecord.getOne(announcement.id);
+
+  expect(foundAnnouncement).toBeDefined();
+  expect(foundAnnouncement.id).toBe(announcement.id);
 });
