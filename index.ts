@@ -3,6 +3,7 @@ import cors from 'cors';
 import 'express-async-errors';
 import { handleError } from './utils/errors';
 import { rateLimit } from 'express-rate-limit';
+import { announcementRoutes } from './routes/announcement.route';
 
 const app = express();
 
@@ -15,11 +16,7 @@ app.use(rateLimit({
   max: 100, //Limit each IP to 100 requests per 5 minutes
 }));
 
-
-//ROUTES
-// app.get('/', async (req, res) => {
-//   throw new Error('ddaaaaammn');
-// })
+app.use('/announcement', announcementRoutes);
 
 app.use(handleError);
 
